@@ -1,0 +1,87 @@
+<html>
+
+<head>
+  <link rel='stylesheet' href="src/app.css">
+  <title>Infographics</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://use.typekit.net/emo3uvq.js"></script>
+  <script>
+    try {
+      Typekit.load({
+        async: true
+      });
+    } catch (e) {}
+  </script>
+  <base href="./">
+
+  <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+  
+  <!--removeIf(development)-->
+  <script src="app.min.js"></script>
+  <!--endRemoveIf(development)-->
+
+
+</head>
+
+<body>
+  <div class="container">
+    <div id="info">
+          <div class="resetButton"><img src="/assets/highlight.svg" alt=""></div>
+
+      <h1><span class="title"></span> <span class="year"></span></h1>
+      <div class="info__item info__item--legend">
+        <h4 class="LEGEND_NAME"></h4>
+      </div>
+      <div class="info__item info__item--breadcrumb">
+        <p><span class="legend_depth_0 legend_depth_0--name"></span>
+          <span class="legend_depth_1 legend_depth_1--name"></span>
+        </p>
+      </div>
+      <div class="info__item info__item--price">
+        <h3 id="AMOUNT"></h3>
+        <figure>Total amount given by <span class="title"></span><span class="LEGEND_NAME_ALT"></span></figure>
+      </div>
+      <div class="info__item_legend">
+        <div class="legend--item legend_depth_2">
+          <div class="legend--item--percentage legend--item--percentage--text">25%</div>
+          <section>
+            <h4 class="legend_depth_2--name"></h4>
+            <h6><span></span> comprises <span class="legend--item--percentage--text"></span> of <span class="legend_depth_2--name--alt"></span>.</h6>
+          </section>
+        </div>
+        <div class="legend--item legend_depth_1">
+          <div class="legend--item--percentage legend--item--percentage--text">25%</div>
+          <section>
+            <h4 class="legend_depth_1--name"></h4>
+            <h6><span></span> comprises <span class="legend--item--percentage--text"></span> of <span class="legend_depth_1--name--alt"></span>.</h6>
+          </section>
+        </div>
+        <div class="legend--item  legend_depth_0">
+          <div class="legend--item--percentage legend--item--percentage--text">5%</div>
+          <section>
+            <h4 class="legend_depth_0--name"></h4>
+            <h6><span></span> comprises <span class="legend--item--percentage--text"></span> of Total funding.</h6>
+          </section>
+
+        </div>
+      </div>
+      <div class="sidebox">
+        <h2 id="AMOUNT">$160,000,000</h2>
+        <h5 id="CATEGORY">Flexible Earmarking</h5>
+        <p id="DESCRIPTION">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem magnam velit soluta commodi, delectus minus placeat eos, cum ducimus odit similique maxime animi deleniti excepturi nam architecto adipisci! Maxime, ullam?</p>
+      </div>
+    </div>
+    <div id="graph"></div>
+    
+  </div>
+  <footer>
+     <p class="lastUpdated"></p>
+  </footer>
+ 
+</body>
+
+
+</html>
