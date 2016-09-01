@@ -185,8 +185,10 @@
 footer {
 	@include outer-container;
     position: relative;
-	font-size: 11px;
 	text-align: left;
+	p {
+		font-size: 14px;
+	}
 	@include media($mobile){
 		text-align: center;
 		margin-top: 24px;

@@ -15,6 +15,7 @@
     "Bootstrap"
   ],
   "dependencies": {
+    "@types/mustache": "^0.8.28",
     "bourbon": "^4.2.7",
     "bourbon-neat": "^1.7.4",
     "handlebars-helper-equal": "^1.0.0",

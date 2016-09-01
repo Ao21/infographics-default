@@ -1,15 +1,19 @@
 import {Utils} from './../../common/utils';
 import * as $ from 'jquery';
 import * as moment from 'moment';
+import * as m from 'mustache';
 
 export class SunburstHaloInfo {
-	constructor() { }
+	constructor() {
+
+	}
 	setTitle(title) {
 		$('.legend__title h1 span.primary').text(title);
 	}
 
-	setPrice(price) {
-		$('.legend__amount h3').text('$' + Utils.formatMoney(price, 0));
+	setPrice(price, currency) {
+		let cur = currency ? `${currency} ` : 'USD $';
+		$('.legend__amount h3').text(cur + Utils.formatMoney(price, 0));
 	}
 	setCountryInfo(country: any, localMode?: boolean) {
 		let itemTitle = country.key ? country.key : country.LEGEND_NAME;
@@ -36,11 +40,12 @@ export class SunburstHaloInfo {
 		$('.country_name').text(` ${itemTitle}`);
 		$('#info').removeClass();
 		$('#info').addClass(`graph-depth-${country.depth}`);
-		let amount;
-		console.log(country);
+		let amount, currency;
 		if (!localMode) {
+			currency = null;
 			amount = country.USD_AMOUNT ? country.USD_AMOUNT : country.value;
 		} else {
+			currency = country.CURRENCY ? country.CURRENCY : country.parent.CURRENCY;
 			amount = country.AMOUNT ? country.AMOUNT : country.value;
 		}
 		
@@ -49,15 +54,17 @@ export class SunburstHaloInfo {
 			category = country.FUNDING_CATEGORY;
 		}
 		let description = country.DESCRIPTION;
-		if (!amount) { amount = '' }
-		if (!category) { amount = '' }
-		if (!description) { description = '' }
+		if (!amount) { amount = ''; }
+		if (!category) { amount = ''; }
+		if (!description) { description = ''; }
 		
-		$('.legend__amount h3').text('$' + Utils.formatMoney(amount, 0));
+		this.setPrice(amount, currency);
+
 		$('#CATEGORY').text(category);
 		$('#DESCRIPTION').text(description);
 		
 	}
+
 
 	reset() {
 		$('.legend__sub-title h4').text('Total Contributions');
@@ -114,7 +121,7 @@ export class SunburstHaloInfo {
 			$('.legend-item-3').addClass('active first solo');
 		 }
 
-		 if(ancestors.lenght === 0) {
+		 if (ancestors.lenght === 0) {
 			 $('.legend__amount figure').addClass('isTotal');
 		 }
 		

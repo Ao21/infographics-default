@@ -354,6 +354,8 @@ export class SunburstHalo {
 	}
 
 	reset = (d?) => {
+		this.localMode = false;
+		this.prepData();
 		d3.select("#graph").selectAll("path").remove();
 		this.nodes = this.partitionLayout
 			.nodes(this.arcData);
