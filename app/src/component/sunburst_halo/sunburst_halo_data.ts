@@ -2,6 +2,9 @@ import * as _ from 'lodash';
 import * as recursive from 'lodash-recursive';
 import {Utils} from './../../common/utils';
 
+let entryId = 0;
+
+
 export class SunburstHaloUtils {
 
 	constructor() {
@@ -63,13 +66,14 @@ export class SunburstHaloUtils {
 		return path;
 	}
 
-	static addHiddenChildTotals(values) {
+	static addHiddenChildTotals(values, localMode?) {
+		let modeType = localMode ? 'AMOUNT' : 'USD_AMOUNT';
 		let childValues = values;
 		// Add the Totals Together
 		let childEntryTotalAgg =
 			_.reduce(_.filter(childValues, (z: any) => { return z.TYPE === 'Total'; })
 				, (sum = 0, z: any) => {
-					return sum + Number(z.AMOUNT);
+					return sum + Number(z[modeType]);
 				}, 0);
 		// Get the Sub Category child entires
 		values = _.filter(childValues, (z: any) => { return z.TYPE !== 'Total'; });
@@ -80,7 +84,7 @@ export class SunburstHaloUtils {
 			// Get the SubCategory child entry Values that aren't totals
 			let subValueTotals = _.reduce(_.filter(childValues, (z: any) => { return z.TYPE != 'Total'; })
 				, (sum = 0, z: any) => {
-					return sum + Number(z.AMOUNT);
+					return sum + Number(z[modeType]);
 				}, 0);
 			// If The Subcategory Entry Values dont add up to the Subcategory Total Value
 			// Insert a hidden arc on the circle
@@ -101,14 +105,17 @@ export class SunburstHaloUtils {
 		})
 		return children ? true : false;
 	}
-    static sumAmounts(data) {
-		_.forEach(data, (e) => {
+
+    static sumAmounts(data, localMode?) {
+		entryId = 0;
+		let d = _.cloneDeep(data);
+		_.forEach(d, (e) => {
+			e.id = entryId++;
 			let obj = {};
 			_.forEach(e.values, (x) => {
 				if (x.key) {
-
 					// Add the Hidden Child Value Totals
-					x.values = this.addHiddenChildTotals(x.values);
+					x.values = this.addHiddenChildTotals(x.values, localMode);
 					// Set the Sub Category to the same category as its child entries
 					x.CATEGORY = e.key + ': ' + x.values[0].FUNDING_CATEGORY;
 				} else {
@@ -117,7 +124,7 @@ export class SunburstHaloUtils {
 			});
 
 			if (!this.hasChildren(e)) {
-				e.values = this.addHiddenChildTotals(e.values);
+				e.values = this.addHiddenChildTotals(e.values, localMode);
 			}
 			
 			// e.value = _.reduce(e.values, (sum, o: any) => {
@@ -125,20 +132,21 @@ export class SunburstHaloUtils {
 			// }, 0);
 
 		});
-		recursive.map(data, (node, recursive, map) => {
+		recursive.map(d, (node, recursive, map) => {
 			if (node.values) {
 				recursive(node.values);
 			}
 			return map(node);
 		}, (node) => {
-			if (node.USD_AMOUNT) {
-				node.value = Number(node.USD_AMOUNT);
+			if (node.USD_AMOUNT || node.AMOUNT) {
+				node.value = localMode ? node.AMOUNT : node.USD_AMOUNT;
 			}
 			if (!node.key) {
 				node.key = node.LEGEND_NAME;
 			}
+			node.id = entryId++;
 			return node;
 		});
-		return data;
+		return d;
 	}
 }

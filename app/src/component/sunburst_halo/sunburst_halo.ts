@@ -47,6 +47,8 @@ export class SunburstHalo {
 	mobileMq: any;
 
 	showBackButton: boolean = false;
+	localMode: boolean = false;
+	lastSelectedCountry: any;
 
 	options = window['GRAPH_OPTIONS'];
 
@@ -54,10 +56,38 @@ export class SunburstHalo {
 
 		this.mobileMq = window.matchMedia("(max-width: 600px)");
 
+		$('.currency_selector button').click((e: any) => {
+			$('.currency_selector button').removeClass('active');
+			let a = e.target.dataset.type;
+			$(e.target).addClass('active');
+			if (e.target.dataset.type === 'default') {
+				this.localMode = false;
+				this.prepData();
+				d3.select("#graph").selectAll("path").remove();
+				this.nodes = this.partitionLayout
+					.nodes(this.arcData);
+				this.update();
+				if (this.lastSelectedCountry) {
+					this.info.setCountryInfo(this.lastSelectedCountry, false);
+					this.highlightCountry(this.lastSelectedCountry);
+				}
+			} else {
+				this.localMode = true;
+				this.prepData();
+				d3.select("#graph").selectAll("path").remove();
+				this.nodes = this.partitionLayout
+					.nodes(this.arcData);
+				this.update();
+				this.info.setCountryInfo(this.lastSelectedCountry, true);
+				this.highlightCountry(this.lastSelectedCountry);
+
+			}
+		});
+
 		this.mouseOutAll.throttleTime(50).subscribe((next) => {
 			this.info.setPrice(this.arcData.value);
 			this.info.reset()
-			
+
 		})
 
 
@@ -71,7 +101,7 @@ export class SunburstHalo {
 					.style("fill", (d) => {
 						return this.colorRange(d.value);
 					});
-				
+
 
 				// this.arcPlot.selectAll("path")
 				// 	.filter((node) => {
@@ -85,9 +115,12 @@ export class SunburstHalo {
 		});
 		this.mouseOver.debounceTime(50).subscribe((next) => {
 			if (next.TYPE !== 'Hidden') {
-				this.info.setCountryInfo(next);
+				this.lastSelectedCountry = next;
+				$('.resetButton').show();
+				this.info.setCountryInfo(next, this.localMode);
 				this.info.setTitle(next.COUNTRY_NAME);
-				this.info.setCountryInfo(next);
+				this.info.setCountryInfo(next, this.localMode);
+				$('.currency_selector').addClass('isActive');
 				let ancestors = SunburstHaloUtils.getAncestors(next);
 				this.info.createAncestors(ancestors);
 
@@ -117,18 +150,51 @@ export class SunburstHalo {
 
 				this.worldProjection.transition(next.MAP_COUNTRY ? next.MAP_COUNTRY.split(';') : 'default');
 
-				$('.resetButton').click((e)=>{
+				$('.resetButton').click((e) => {
 					this.reset();
 				});
 			}
 		})
 	}
 
+	highlightCountry(next) {
+		
+		let node = _.find(this.nodes, (e:any) => { return e.id === next.id });
+		let ancestors = SunburstHaloUtils.getAncestors(node);
+		this.info.createAncestors(ancestors);
+		this.arcPlot.selectAll("path")
+			.style("opacity", 0.3)
+			.filter(function (node) {
+				return node.TYPE !== 'Hidden';
+			})
+			.style("fill", (d) => {
+				return this.colorRange(d.value);
+			});;
+		this.arcPlot.selectAll("path")
+			.filter(function (node) {
+				console.log((ancestors.indexOf(node) >= 0))
+				return (ancestors.indexOf(node) >= 0);
+			}).style("opacity", 0.9)
+			.style("fill", (d) => {
+				return this.c.darkBlue(100)
+			});
+
+		this.arcPlot.selectAll("path")
+			.filter((node) => {
+				return node.id === next.id;
+			}).style("opacity", 1)
+			.style("fill", (d) => {
+				return this.c.darkBlue(100)
+			});
+
+		this.worldProjection.transition(next.MAP_COUNTRY ? next.MAP_COUNTRY.split(';') : 'default');
+	}
+
 	init(data: any) {
 		this.scope = _.extend(this.scope, SunburstHaloUtils.defs());
 		this.scope.data = data;
-		
-		
+
+
 		this.info.setLastUpdatedDate(_.max(_.map(data, (e: any) => { return e.DATE })));
 		this.prepData();
 
@@ -142,7 +208,7 @@ export class SunburstHalo {
 			this.vis.append("rect")
 				.attr("class", "vz-background")
 				.style("fill", "transparent")
-				.on("mouseout", (d, i) => this.mouseOutAll.next(d));
+		// .on("mouseout", (d, i) => this.mouseOutAll.next(d));
 
 		this.worldPlot = this.vis.append("g").attr("class", "un-world-plot");
 		let worldPosition = this.scope.size.width * 0.4;
@@ -175,21 +241,25 @@ export class SunburstHalo {
 		} else {
 			year = 2015;
 		}
-		this.scope.data = _.filter(this.scope.data, (e: any) => { return e.YEAR === year; });
+		let mData = _.filter(this.scope.data, (e: any) => { return e.YEAR === year; });
 		this.sunburstArcs =
 			d3.nest()
 				.key((e: any) => { return e.CATEGORY; })
 				.key((e: any) => { return e.FUNDING_CATEGORY; })
-				.entries(this.scope.data);
+				.entries(mData);
 
 		this.sunburstArcs = Utils.unNester(this.sunburstArcs);
-		this.arcData = { name: "root", values: SunburstHaloUtils.sumAmounts(this.sunburstArcs) }
 
+		this.evaluateArcData();
 		// _.each(this.arcData.children, (e) => {
 		// 	console.log(e);
 		// })
-		this.colors.domain(SunburstHaloUtils.getIds(this.scope.data));
+		this.colors.domain(SunburstHaloUtils.getIds(mData));
 
+	}
+
+	evaluateArcData() {
+		this.arcData = { name: "root", values: SunburstHaloUtils.sumAmounts(this.sunburstArcs, this.localMode) }
 	}
 
 	measure() {
@@ -241,7 +311,7 @@ export class SunburstHalo {
 			.data(this.nodes)
 			.enter().append("svg:path")
 			.on("mouseover", (d, i) => this.mouseOver.next(d))
-			.on("mouseout", (d, i) => this.mouseOut.next(d))
+			// .on("mouseout", (d, i) => this.mouseOut.next(d))
 			.on("click", this.click)
 			.attr("display", function (d) { return d.depth ? null : "none"; })
 			.attr("d", this.arc)

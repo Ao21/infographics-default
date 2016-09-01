@@ -35,9 +35,58 @@
 
 <body>
   <div class="container">
-    <div id="info">
-          <div class="resetButton"><img src="/assets/highlight.svg" alt=""></div>
-
+    <div class="legend">
+      <div class="resetButton"><img src="/assets/highlight.svg" alt=""></div>
+      <div class="legend__title">
+        <h1>
+          <span class="primary">Country</span>
+          <span class="secondary"></span>
+        </h1>
+      </div>
+      <div class="legend__sub-title">
+        <h4>Total Amount Given By </h4>
+      </div>
+      <div class="legend__breadcrumbs">
+        <p class="breadcrumb">
+          <span class="breadcrumb__item legend-item-2 legend-item-2-text"></span>
+          <span class="breadcrumb__item legend-item-3 legend-item-3-text"></span>
+        </p>
+      </div>
+      <div class="legend__amount">
+        <div class="currency_selector">
+          <button class="active" data-type="default">USD</button>
+          <button data-type="local">Local</button>
+        </div>
+        <h3></h3>
+        <figure class="isTotal"><span>Total </span> Amount given for <span class="country_name"></span></figure>
+      </div>
+      <div class="legend__sub-legend">
+        <div class="legend-item legend-item-1">
+            <div class="legend-item__pie percentage"></div>
+            <section class="legend-item__details">
+              <h4 class="legend-item-1-text"></h4>
+              <h6>Comprises <span class="percentage"></span> of the <span class="legend-item-1-description"></span>.</h6>
+            </section>
+          </div>
+          <div class="legend-item legend-item-2">
+            <div class="legend-item__pie percentage" ></div>
+            <section class="legend-item__details">
+              <h4 class="legend-item-2-text"></h4>
+              <h6>Comprises <span class="percentage"></span> of the <span class="legend-item-2-description"></span>.</h6>
+            </section>
+          </div>
+          <div class="legend-item legend-item-3">
+            <div class="legend-item__pie percentage"></div>
+            <section class="legend-item__details">
+              <h4 class="legend-item-3-text"></h4>
+              <h6>Comprises <span class="percentage"></span> of the total funding.</h6>
+            </section>
+          </div>
+          
+      </div>
+    </div>
+    <!--<div id="info">
+      <div class="resetButton"><img src="/assets/highlight.svg" alt=""></div>
       <h1><span class="title"></span> <span class="year"></span></h1>
       <div class="info__item info__item--legend">
         <h4 class="LEGEND_NAME"></h4>
@@ -75,19 +124,14 @@
 
         </div>
       </div>
-      <div class="sidebox">
-        <h2 id="AMOUNT">$160,000,000</h2>
-        <h5 id="CATEGORY">Flexible Earmarking</h5>
-        <p id="DESCRIPTION">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem magnam velit soluta commodi, delectus minus placeat eos, cum ducimus odit similique maxime animi deleniti excepturi nam architecto adipisci! Maxime, ullam?</p>
-      </div>
-    </div>
+    </div>-->
     <div id="graph"></div>
-    
+
   </div>
   <footer>
-     <p class="lastUpdated"></p>
+    <p class="lastUpdated"></p>
   </footer>
- 
+
 </body>
 
 
