@@ -1,7 +1,6 @@
 import {Utils} from './../../common/utils';
 import * as $ from 'jquery';
 import * as moment from 'moment';
-import * as m from 'mustache';
 
 export class SunburstHaloInfo {
 	constructor() {

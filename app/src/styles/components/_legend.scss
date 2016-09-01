@@ -27,6 +27,10 @@
     &__amount h3 {
         color: $darkBlue;
         font-weight: 600;
+        @include media($upToDesktop){
+            font-size: 36px;
+        }
+
     }
     &__amount figure {
         position: absolute;
@@ -77,6 +81,11 @@
                 border-bottom: 4px solid transparent;
                 border-left: 6px solid $darkBlue;
             }
+        }
+    }
+    &__sub-legend{
+        @include media($mobile) {
+            display: none;
         }
     }
     /* Legend Items */
