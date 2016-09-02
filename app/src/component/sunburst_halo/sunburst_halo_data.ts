@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as recursive from 'lodash-recursive';
-import {Utils} from './../../common/utils';
+import { Utils } from './../../common/utils';
+import * as $ from 'jquery';
 
 let entryId = 0;
 
@@ -11,38 +12,38 @@ export class SunburstHaloUtils {
 
 	}
 
-    static defs() {
-        let scope: any = {};
-        scope.id = 'SUNBURST_HALO';
+	static defs() {
+		let scope: any = {};
+		scope.id = 'SUNBURST_HALO';
 		let windowSize = Utils.getPageSize();
 
 		let w = document.getElementById('graph').offsetWidth;
-        scope.size = {
-            width: w,
-            height: w
-        };
+		scope.size = {
+			width: w,
+			height: w
+		};
 
-        scope.duration = 500;
-        scope.padAngle = 1;
-        scope.margin = {
-            "top": "0%",
-            "bottom": "7%",
-            "left": "0%",
-            "right": "0%"
-        };
+		scope.duration = 500;
+		scope.padAngle = 1;
+		scope.margin = {
+			"top": "0%",
+			"bottom": "7%",
+			"left": "0%",
+			"right": "0%"
+		};
 		scope.size = Utils.size(scope.margin, scope.size.width, scope.size.height);
 		scope.radius = Math.min(scope.size.width, scope.size.height) / 2;
 		scope.arcThickness = 10;
-        return scope;
+		return scope;
 
-    }
+	}
 	static getIds(data) {
 		let output = [];
 		data.forEach(function (d) {
-            if (output.indexOf(d.ID) === -1) {
-                output.push(d.ID);
-            }
-        });
+			if (output.indexOf(d.ID) === -1) {
+				output.push(d.ID);
+			}
+		});
 		return output;
 
 	}
@@ -99,6 +100,7 @@ export class SunburstHaloUtils {
 		}
 		return values;
 	}
+
 	static hasChildren(node) {
 		let children = _.find(node.values, e => {
 			return e['values'];
@@ -106,7 +108,28 @@ export class SunburstHaloUtils {
 		return children ? true : false;
 	}
 
-    static sumAmounts(data, localMode?) {
+	static findProp(obj, propName) {
+		let a;
+		_.forEach(obj, (e) => {
+			if (e.values) {
+				_.forEach(e.values, (x) => {
+					if (x[propName]) {
+						a = x[propName];
+					} else {
+						this.findProp(x, propName);
+					}
+				});
+			}
+		});
+		return a;
+	}
+
+
+	static sumAmounts(data, localMode?) {
+		var curr = this.findProp(data, 'CURRENCY');
+		console.log(curr);		
+		$('.currency_selector button[data-type="local"]').text(curr);
+		
 		entryId = 0;
 		let d = _.cloneDeep(data);
 		_.forEach(d, (e) => {
@@ -114,19 +137,20 @@ export class SunburstHaloUtils {
 			let obj = {};
 			_.forEach(e.values, (x) => {
 				if (x.key) {
+					e.CURRENCY = x.values[0].CURRENCY;
 					// Add the Hidden Child Value Totals
 					x.values = this.addHiddenChildTotals(x.values, localMode);
 					// Set the Sub Category to the same category as its child entries
 					x.CATEGORY = e.key + ': ' + x.values[0].FUNDING_CATEGORY;
 				} else {
-					
+
 				}
 			});
 
 			if (!this.hasChildren(e)) {
 				e.values = this.addHiddenChildTotals(e.values, localMode);
 			}
-			
+
 			// e.value = _.reduce(e.values, (sum, o: any) => {
 			// 	return sum += Number(o.AMOUNT) ? Number(o.AMOUNT) : Number(o.value);
 			// }, 0);
@@ -144,7 +168,9 @@ export class SunburstHaloUtils {
 			if (!node.key) {
 				node.key = node.LEGEND_NAME;
 			}
+			node.CURRENCY = curr;
 			node.id = entryId++;
+
 			return node;
 		});
 		return d;

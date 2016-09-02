@@ -7,10 +7,9 @@ export class SunburstHaloInfo {
 
 	}
 	setTitle(title) {
-		$('.legend__title h1 span.primary').text(title);
+		$('.legend__title h1 span.primary,span.country_name').text(title);
 	}
-
-	setPrice(price, currency) {
+	setPrice(price, currency?) {
 		let cur = currency ? `${currency} ` : 'USD $';
 		$('.legend__amount h3').text(cur + Utils.formatMoney(price, 0));
 	}
@@ -35,8 +34,7 @@ export class SunburstHaloInfo {
 			var percentage = Math.round(country.value / country.parent.value * 100);
 			$('.legend-item-3 .percentage').text(percentage + '%');
 		}
-		$('.legend__sub-title h4').text(itemTitle);
-		$('.country_name').text(` ${itemTitle}`);
+		$('.legend__sub-title h4, span.country_name').text(itemTitle);
 		$('#info').removeClass();
 		$('#info').addClass(`graph-depth-${country.depth}`);
 		let amount, currency;
@@ -65,8 +63,8 @@ export class SunburstHaloInfo {
 	}
 
 
-	reset() {
-		$('.legend__sub-title h4').text('Total Contributions');
+	reset(year) {
+		$('.legend__sub-title h4').text(`Total Contribution for ${year}`);
 		$('.LEGEND_NAME_ALT').text('');
 		$('.info__item_legend').hide();
 		$('.legend-item-1, .legend-item-2, .legend-item-3').removeClass('active');
