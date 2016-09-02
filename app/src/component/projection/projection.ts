@@ -3,6 +3,12 @@ import * as _ from 'lodash';
 import {Utils} from './../../common/utils';
 import * as q from 'd3-queue';
 import * as topojson from 'topojson';
+import * as d3Timer from 'd3-timer';
+
+let time = Date.now();
+var rotate = [-60, -30];
+var velocity = [.005, -0];
+let timer = null;
 
 import {Colors} from './../../common/colours';
 
@@ -115,12 +121,39 @@ export class WorldProjection {
 
     }
 
+    rotate = () => {
+        if (timer === null) {
+            let n = -0.1;
+            timer = d3Timer.timer(() => {
+                var dt = Date.now() - time;
+                if (rotate[1] < -50) {
+                    n = 0.1;
+                    rotate[1] = -49;
+                } else if (rotate[1] > 30) {
+                    n = -0.1;
+                    rotate[1] = 29;
+                }
+
+                rotate[1] = rotate[1] + n;                
+                this.projection.rotate([rotate[0] + velocity[0] * dt, rotate[1] + velocity[1] * dt]);
+                this.updateWorld();
+            });
+        }
+
+    }
+
     transition = (countryName) => {
         let country;
         let countries = [];
 
-        if (countryName === 'default') {
-            countryName = [this.defaultCountry];
+        if (timer) {
+            timer.stop();
+            timer = null;
+        }
+
+        if (countryName === 'default' || !countryName) {
+            return this.rotate();
+            //countryName = [this.defaultCountry];
         }
 
         if (_.isString(countryName)) {
@@ -156,6 +189,17 @@ export class WorldProjection {
             })
             .transition()
 
+    }
+
+    updateWorld() {
+        this.context.clearRect(0, 0, this.scope.width, this.scope.height);
+                    this.context.fillStyle = "#ccc",
+                        this.context.beginPath(),
+                        this.path(this.land),
+                        this.context.fill();
+
+                    this.context.strokeStyle = "#fff", this.context.lineWidth = .5, this.context.beginPath(), this.path(this.borders), this.context.stroke();
+                    this.context.strokeStyle = "#000", this.context.lineWidth = 2, this.context.beginPath(), this.path(this.globe), this.context.stroke();
     }
 
 }
