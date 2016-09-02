@@ -239,7 +239,7 @@ export class SunburstHalo {
 		if (this.options && this.options.hasOwnProperty('year')) {
 			year = this.options.year;
 		} else {
-			year = 2015;
+			year = 2016;
 		}
 		let mData = _.filter(this.scope.data, (e: any) => { return e.YEAR === year; });
 		this.sunburstArcs =
