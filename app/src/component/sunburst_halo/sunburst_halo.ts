@@ -361,6 +361,7 @@ export class SunburstHalo {
 			.nodes(this.arcData);
 		this.info.reset();
 		$('.resetButton').hide();
+		this.worldProjection.rotate();
 		this.update();
 
 	}

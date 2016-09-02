@@ -115,6 +115,7 @@ export class SunburstHaloUtils {
 			_.forEach(e.values, (x) => {
 				if (x.key) {
 					// Add the Hidden Child Value Totals
+					e.CURRENCY = x.values[0].CURRENCY;
 					x.values = this.addHiddenChildTotals(x.values, localMode);
 					// Set the Sub Category to the same category as its child entries
 					x.CATEGORY = e.key + ': ' + x.values[0].FUNDING_CATEGORY;
