@@ -13,9 +13,19 @@ export class SunburstHaloInfo {
 		let cur = currency ? `${currency} ` : 'USD $';
 		$('.legend__amount h3').text(cur + Utils.formatMoney(price, 0));
 	}
+
+	countParentItems(country, n) {
+		if (country.parent) {
+			n++;
+			return this.countParentItems(country.parent, n);
+		}  else {
+			return n;
+		}
+	};
 	setCountryInfo(country: any, localMode?: boolean) {
 		let itemTitle = country.key ? country.key : country.LEGEND_NAME;
-		if (country.depth == 3) {
+		let depth = this.countParentItems(country, 0);
+		if (depth == 3) {
 			var percentage = Math.round(country.value / country.parent.value * 100);
 			var percentage2 = Math.round(country.parent.value / country.parent.parent.value * 100);
 			var percentage3 = Math.round(country.parent.parent.value / country.parent.parent.parent.value * 100);
@@ -23,20 +33,20 @@ export class SunburstHaloInfo {
 			$('.legend-item-2 .percentage').text(percentage2 + '%');
 			$('.legend-item-3 .percentage').text(percentage3 + '%');
 		}
-		if (country.depth == 2) {
+		if (depth == 2) {
 			var percentage = Math.round(country.value / country.parent.value * 100);
 			var percentage2 = Math.round(country.parent.value / country.parent.parent.value * 100);
 			$('.legend-item-2 .percentage').text(percentage + '%');
 			$('.legend-item-3 .percentage').text(percentage2 + '%');
 		}
 
-		if (country.depth == 1) {
+		if (depth == 1) {
 			var percentage = Math.round(country.value / country.parent.value * 100);
 			$('.legend-item-3 .percentage').text(percentage + '%');
 		}
 		$('.legend__sub-title h4, span.country_name').text(itemTitle);
 		$('#info').removeClass();
-		$('#info').addClass(`graph-depth-${country.depth}`);
+		$('#info').addClass(`graph-depth-${depth}`);
 		let amount, currency;
 		if (!localMode) {
 			currency = null;
