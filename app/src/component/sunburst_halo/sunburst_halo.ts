@@ -52,6 +52,8 @@ export class SunburstHalo {
 
 	options = window['GRAPH_OPTIONS'];
 
+	year: any;
+
 	constructor() {
 
 		this.mobileMq = window.matchMedia("(max-width: 600px)");
@@ -147,7 +149,7 @@ export class SunburstHalo {
 					.style("fill", (d) => {
 						return this.c.darkBlue(100)
 					});
-
+				console.log(next);
 				this.worldProjection.transition(next.MAP_COUNTRY ? next.MAP_COUNTRY.split(';') : 'default');
 
 				$('.resetButton').click((e) => {
@@ -194,6 +196,12 @@ export class SunburstHalo {
 		this.scope = _.extend(this.scope, SunburstHaloUtils.defs());
 		this.scope.data = data;
 
+		if (this.options && this.options.hasOwnProperty('year')) {
+			this.year = this.options.year;
+		} else {
+			this.year = 2016;
+		}
+
 
 		this.info.setLastUpdatedDate(_.max(_.map(data, (e: any) => { return e.DATE })));
 		this.prepData();
@@ -231,17 +239,12 @@ export class SunburstHalo {
 		this.measure();
 		this.update();
 		this.info.setPrice(this.arcData.value);
-		this.info.reset();
+		this.info.reset(this.year);
 	}
 
 	prepData() {
-		let year;
-		if (this.options && this.options.hasOwnProperty('year')) {
-			year = this.options.year;
-		} else {
-			year = 2015;
-		}
-		let mData = _.filter(this.scope.data, (e: any) => { return e.YEAR === year; });
+		
+		let mData = _.filter(this.scope.data, (e: any) => { return e.YEAR === this.year; });
 		this.sunburstArcs =
 			d3.nest()
 				.key((e: any) => { return e.CATEGORY; })
