@@ -127,7 +127,6 @@ export class SunburstHaloUtils {
 
 	static sumAmounts(data, localMode?) {
 		var curr = this.findProp(data, 'CURRENCY');
-		console.log(curr);		
 		$('.currency_selector button[data-type="local"]').text(curr);
 		
 		entryId = 0;

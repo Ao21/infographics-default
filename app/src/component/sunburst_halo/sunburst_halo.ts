@@ -41,7 +41,6 @@ export class SunburstHalo {
 	selectedNode: any;
 
 	mouseOut: Subject<any> = new Subject();
-	mouseOutAll: Subject<any> = new Subject();
 	mouseOver: Subject<any> = new Subject();
 
 	mobileMq: any;
@@ -85,12 +84,6 @@ export class SunburstHalo {
 
 			}
 		});
-
-		this.mouseOutAll.throttleTime(50).subscribe((next) => {
-			this.info.setPrice(this.arcData.value);
-			this.info.reset()
-
-		})
 
 
 		this.mouseOut.throttleTime(50).subscribe((next) => {
@@ -149,7 +142,6 @@ export class SunburstHalo {
 					.style("fill", (d) => {
 						return this.c.darkBlue(100)
 					});
-				console.log(next);
 				this.worldProjection.transition(next.MAP_COUNTRY ? next.MAP_COUNTRY.split(';') : 'default');
 
 				$('.resetButton').click((e) => {
@@ -216,7 +208,6 @@ export class SunburstHalo {
 			this.vis.append("rect")
 				.attr("class", "vz-background")
 				.style("fill", "transparent")
-		// .on("mouseout", (d, i) => this.mouseOutAll.next(d));
 
 		this.worldPlot = this.vis.append("g").attr("class", "un-world-plot");
 		let worldPosition = this.scope.size.width * 0.4;
@@ -362,7 +353,7 @@ export class SunburstHalo {
 		d3.select("#graph").selectAll("path").remove();
 		this.nodes = this.partitionLayout
 			.nodes(this.arcData);
-		this.info.reset();
+		this.info.reset(this.year);
 		$('.resetButton').hide();
 		this.worldProjection.rotate();
 		this.update();
