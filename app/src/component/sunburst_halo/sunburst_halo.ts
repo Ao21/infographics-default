@@ -46,7 +46,7 @@ export class SunburstHalo {
 	mobileMq: any;
 
 	showBackButton: boolean = false;
-	localMode: boolean = false;
+	localMode: boolean = true;
 	lastSelectedCountry: any;
 
 	options = window['GRAPH_OPTIONS'];
@@ -96,15 +96,6 @@ export class SunburstHalo {
 					.style("fill", (d) => {
 						return this.colorRange(d.value);
 					});
-
-
-				// this.arcPlot.selectAll("path")
-				// 	.filter((node) => {
-				// 		return node === next;
-				// 	}).style("opacity", 1)
-				// 	.style("fill", (d) => {
-				// 		return this.c.blue(100)
-				// 	});
 			}
 
 		});
@@ -186,7 +177,8 @@ export class SunburstHalo {
 
 	init(data: any) {
 		this.scope = _.extend(this.scope, SunburstHaloUtils.defs());
-		this.scope.data = data;
+		this.scope.data = data.entries;
+		this.scope.country = data.country;
 
 		if (this.options && this.options.hasOwnProperty('year')) {
 			this.year = this.options.year;
@@ -195,7 +187,7 @@ export class SunburstHalo {
 		}
 
 
-		this.info.setLastUpdatedDate(_.max(_.map(data, (e: any) => { return e.DATE })));
+		this.info.setLastUpdatedDate(_.max(_.map(data.entries, (e: any) => { return e.DATE })));
 		this.prepData();
 
 		this.info.setTitle(this.scope.data[0].COUNTRY_NAME);
@@ -229,7 +221,7 @@ export class SunburstHalo {
 
 		this.measure();
 		this.update();
-		this.info.setPrice(this.arcData.value);
+		this.info.setPrice(this.arcData.value, this.scope.data[0].CURRENCY);
 		this.info.reset(this.year);
 	}
 
@@ -245,9 +237,6 @@ export class SunburstHalo {
 		this.sunburstArcs = Utils.unNester(this.sunburstArcs);
 
 		this.evaluateArcData();
-		// _.each(this.arcData.children, (e) => {
-		// 	console.log(e);
-		// })
 		this.colors.domain(SunburstHaloUtils.getIds(mData));
 
 	}
@@ -348,8 +337,12 @@ export class SunburstHalo {
 	}
 
 	reset = (d?) => {
-		this.localMode = false;
+		this.localMode = true;
+		this.info.setPrice(this.arcData.value, this.scope.data[0].CURRENCY);
 		this.prepData();
+		$('.currency_selector').removeClass('isActive');
+		$('.currency_selector button').removeClass('active');
+		$('.currency_selector button:first-child').addClass('active');
 		d3.select("#graph").selectAll("path").remove();
 		this.nodes = this.partitionLayout
 			.nodes(this.arcData);

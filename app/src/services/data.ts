@@ -17,7 +17,7 @@ export class DataService {
                 };
             }
 
-            d3.json(`/api/infographics/${query.country}/${query.graph}`, (data) => {
+            d3.json(`http://localhost:5000/api/infographics/${query.country}/${query.graph}`, (data) => {
                 res(data);
             });         
 
