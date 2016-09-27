@@ -57,8 +57,9 @@ export class SunburstHalo {
 	year: any;
 
 	constructor() {
-
-		this.options = { "country": "denmark", "graph": "sunburstProjection", "translations": { "totalContributions": "Totale bidrag til", "unhcr": "Totale bidrag til UNHCR", "contributions": "Sist opdateret", "comprises": "Udgør <span class=\"percentage\"></span> af", "total": "<span>Totale</span> bidrag til <span class=\"country_name\"></span>", "countryName": "Danmark" } };
+		if(!this.options){
+			this.options = { "country": "denmark", "graph": "sunburstProjection", "translations": { "totalContributions": "Totale bidrag til", "unhcr": "Totale bidrag til UNHCR", "contributions": "Sist opdateret", "comprises": "Udgør <span class=\"percentage\"></span> af", "total": "<span>Totale</span> bidrag til <span class=\"country_name\"></span>", "countryName": "Danmark" } };
+		}
 		
 		this.info.country = this.options.country;
 
