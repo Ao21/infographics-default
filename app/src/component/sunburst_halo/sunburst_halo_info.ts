@@ -1,13 +1,37 @@
 import {Utils} from './../../common/utils';
+import {SunburstHaloTranslation} from './sunburst_halo_translation';
+
 import * as $ from 'jquery';
 import * as moment from 'moment';
 
 export class SunburstHaloInfo {
+	translations: SunburstHaloTranslation = new SunburstHaloTranslation();
+	textUsed: any;
+	_country: string;
+	useLocal: boolean = false;
+
 	constructor() {
 
 	}
-	setTitle(title) {
-		$('.legend__title h1 span.primary,span.country_name').text(title);
+
+	set country(country) {
+		this._country = country;
+		this.translations.defaults.countryName = country.name;
+		this.textUsed = this.translations.defaults;
+	}
+
+	useLocalTranslations(localTranslations, country) {
+		this.translations.local = localTranslations;
+		this.useLocal = true;
+		this.textUsed = this.translations.local;
+	}
+
+	useEnglishTranslations() {
+		this.textUsed = this.translations.defaults;
+	}
+
+	setTitle() {
+		$('.legend__title h1 span.primary,span.country_name').text(this.textUsed.countryName);
 	}
 	setPrice(price, currency?) {
 		let cur = currency ? `${currency} ` : 'USD $';
@@ -23,7 +47,10 @@ export class SunburstHaloInfo {
 		}
 	};
 	setCountryInfo(country: any, localMode?: boolean) {
-		let itemTitle = country.key ? country.key : country.LEGEND_NAME;
+		let itemTitle = country.LEGEND_NAME ? country.LEGEND_NAME : country.key;
+		if (this.useLocal) {
+			console.log(country,country.key);
+		}
 		let depth = this.countParentItems(country, 0);
 		if (depth == 3) {
 			var percentage = Math.round(country.value / country.parent.value * 100);
@@ -74,14 +101,25 @@ export class SunburstHaloInfo {
 
 
 	reset(year) {
-		$('.legend__sub-title h4').text(`Total Contribution for ${year}`);
+		if (this.useLocal) {
+			$('.legend__sub-title h4').text(this.textUsed.totalContributions + ' ' + year);
+		} else {
+			$('.legend__sub-title h4').text(`Total Contribution for ${year}`);
+		}
+		
 		$('.LEGEND_NAME_ALT').text('');
 		$('.info__item_legend').hide();
 		$('.legend-item-1, .legend-item-2, .legend-item-3').removeClass('active');
 	}
 	
 	setLastUpdatedDate(date) {
-		$('.lastUpdated').text(`Contributions as of ${moment(date).format('MMMM Do YYYY')}`);
+		if (this.useLocal) { 
+			$('.lastUpdated').text(this.textUsed.contributions + ' ' +`${moment(date).format('MMMM Do YYYY')}`);
+		}
+		else {
+			$('.lastUpdated').text(`Contributions as of ${moment(date).format('MMMM Do YYYY')}`);
+		}
+		
 		$('.year').text(`(${moment(date).format('YYYY')})`);
 
 	}

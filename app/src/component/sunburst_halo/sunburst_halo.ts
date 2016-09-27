@@ -12,6 +12,7 @@ import * as recursive from 'lodash-recursive';
 export class SunburstHalo {
 	info: SunburstHaloInfo = new SunburstHaloInfo();
 	worldProjection: WorldProjection = new WorldProjection();
+	
 	scope: any = {};
 	background: any;
 	vis: any;
@@ -51,9 +52,15 @@ export class SunburstHalo {
 
 	options = window['GRAPH_OPTIONS'];
 
+	
+
 	year: any;
 
 	constructor() {
+
+		this.options = { "country": "denmark", "graph": "sunburstProjection", "translations": { "totalContributions": "Totale bidrag til", "unhcr": "Totale bidrag til UNHCR", "contributions": "Sist opdateret", "comprises": "Udgør <span class=\"percentage\"></span> af", "total": "<span>Totale</span> bidrag til <span class=\"country_name\"></span>", "countryName": "Danmark" } };
+		
+		this.info.country = this.options.country;
 
 		this.mobileMq = window.matchMedia("(max-width: 600px)");
 
@@ -103,8 +110,6 @@ export class SunburstHalo {
 			if (next.TYPE !== 'Hidden') {
 				this.lastSelectedCountry = next;
 				$('.resetButton').show();
-				this.info.setCountryInfo(next, this.localMode);
-				this.info.setTitle(next.COUNTRY_NAME);
 				this.info.setCountryInfo(next, this.localMode);
 				$('.currency_selector').addClass('isActive');
 				let ancestors = SunburstHaloUtils.getAncestors(next);
@@ -180,6 +185,12 @@ export class SunburstHalo {
 		this.scope.data = data.entries;
 		this.scope.country = data.country;
 
+		this.info.country = this.scope.country;
+
+		if (this.options.translations) {
+			this.info.useLocalTranslations(this.options.translations, this.scope.country);
+		}
+
 		if (this.options && this.options.hasOwnProperty('year')) {
 			this.year = this.options.year;
 		} else {
@@ -190,7 +201,7 @@ export class SunburstHalo {
 		this.info.setLastUpdatedDate(_.max(_.map(data.entries, (e: any) => { return e.DATE })));
 		this.prepData();
 
-		this.info.setTitle(this.scope.data[0].COUNTRY_NAME);
+		this.info.setTitle();		
 		this.vis = d3.select('#graph')
 			.append("svg:svg")
 			.attr('id', this.scope.id)

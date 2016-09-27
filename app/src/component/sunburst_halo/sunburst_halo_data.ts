@@ -116,9 +116,11 @@ export class SunburstHaloUtils {
 					if (x[propName]) {
 						a = x[propName];
 					} else {
-						this.findProp(x, propName);
+						a = this.findProp(x.values, propName);
 					}
 				});
+			} else if (e[propName]){
+				a = e[propName];
 			}
 		});
 		return a;
@@ -135,15 +137,19 @@ export class SunburstHaloUtils {
 			e.id = entryId++;
 			let obj = {};
 			_.forEach(e.values, (x) => {
+				console.log(x);
 				if (x.key) {
+					
+					e.CATEGORY_REF = x.values[0].CATEGORY_REF;
 					e.CURRENCY = x.values[0].CURRENCY;
 					// Add the Hidden Child Value Totals
 					e.CURRENCY = x.values[0].CURRENCY;
 					x.values = this.addHiddenChildTotals(x.values, localMode);
 					// Set the Sub Category to the same category as its child entries
 					x.CATEGORY = e.key + ': ' + x.values[0].FUNDING_CATEGORY;
+					x.CATEGORY_REF = x.values[0].FUNDING_CATEGORY_REF;
 				} else {
-
+					e.CATEGORY_REF = x.CATEGORY_REF;
 				}
 			});
 
@@ -172,7 +178,7 @@ export class SunburstHaloUtils {
 			node.id = entryId++;
 
 			return node;
-		});
+			});
 		return d;
 	}
 }
