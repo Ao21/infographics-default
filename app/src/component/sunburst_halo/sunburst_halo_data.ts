@@ -67,7 +67,7 @@ export class SunburstHaloUtils {
 		return path;
 	}
 
-	static addHiddenChildTotals(values, localMode?) {
+	static addHiddenChildTotals(values, localMode?, localTranslations?) {
 		let modeType = localMode ? 'AMOUNT' : 'USD_AMOUNT';
 		let childValues = values;
 		// Add the Totals Together
@@ -127,7 +127,7 @@ export class SunburstHaloUtils {
 	}
 
 
-	static sumAmounts(data, localMode?) {
+	static sumAmounts(data, localMode?, localTranslations?) {
 		var curr = this.findProp(data, 'CURRENCY');
 		$('.currency_selector button[data-type="local"]').text(curr);
 		
@@ -137,7 +137,6 @@ export class SunburstHaloUtils {
 			e.id = entryId++;
 			let obj = {};
 			_.forEach(e.values, (x) => {
-				console.log(x);
 				if (x.key) {
 					
 					e.CATEGORY_REF = x.values[0].CATEGORY_REF;

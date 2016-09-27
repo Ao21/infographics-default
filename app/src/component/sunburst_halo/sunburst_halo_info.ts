@@ -42,14 +42,15 @@ export class SunburstHaloInfo {
 		if (country.parent) {
 			n++;
 			return this.countParentItems(country.parent, n);
-		}  else {
+		} else {
 			return n;
 		}
 	};
 	setCountryInfo(country: any, localMode?: boolean) {
 		let itemTitle = country.LEGEND_NAME ? country.LEGEND_NAME : country.key;
 		if (this.useLocal) {
-			console.log(country,country.key);
+			let categoryTranslation = country.CATEGORY_REF.translationsDict[this._country['name_lower']];
+			itemTitle = country.LEGEND_NAME ? country.LEGEND_NAME_LOCAL : categoryTranslation.translation;
 		}
 		let depth = this.countParentItems(country, 0);
 		if (depth == 3) {
@@ -82,7 +83,7 @@ export class SunburstHaloInfo {
 			currency = country.CURRENCY ? country.CURRENCY : country.parent.CURRENCY;
 			amount = country.AMOUNT ? country.AMOUNT : country.value;
 		}
-		
+
 		let category = country.CATEGORY ? country.CATEGORY : country.key;
 		if (country.FUNDING_CATEGORY) {
 			category = country.FUNDING_CATEGORY;
@@ -91,12 +92,12 @@ export class SunburstHaloInfo {
 		if (!amount) { amount = ''; }
 		if (!category) { amount = ''; }
 		if (!description) { description = ''; }
-		
+
 		this.setPrice(amount, currency);
 
 		$('#CATEGORY').text(category);
 		$('#DESCRIPTION').text(description);
-		
+
 	}
 
 
@@ -106,71 +107,91 @@ export class SunburstHaloInfo {
 		} else {
 			$('.legend__sub-title h4').text(`Total Contribution for ${year}`);
 		}
-		
+
 		$('.LEGEND_NAME_ALT').text('');
 		$('.info__item_legend').hide();
 		$('.legend-item-1, .legend-item-2, .legend-item-3').removeClass('active');
 	}
-	
+
 	setLastUpdatedDate(date) {
-		if (this.useLocal) { 
-			$('.lastUpdated').text(this.textUsed.contributions + ' ' +`${moment(date).format('MMMM Do YYYY')}`);
+		if (this.useLocal) {
+			$('.lastUpdated').text(this.textUsed.contributions + ' ' + `${moment(date).format('MMMM Do YYYY')}`);
 		}
 		else {
 			$('.lastUpdated').text(`Contributions as of ${moment(date).format('MMMM Do YYYY')}`);
 		}
-		
+
 		$('.year').text(`(${moment(date).format('YYYY')})`);
 
 	}
 	createAncestors(ancestors) {
+		let anc1Text, anc2Text, anc3Text;
+		if (this.useLocal) {
+			if (ancestors[2]) {
+				anc1Text = ancestors[2].LEGEND_NAME ? ancestors[2].LEGEND_NAME_LOCAL :
+					ancestors[2].CATEGORY_REF.translationsDict[this._country['name_lower']].translation;
 
+			}
+			if (ancestors[1]) {
+				anc2Text = ancestors[1].LEGEND_NAME ? ancestors[1].LEGEND_NAME_LOCAL :
+					ancestors[1].CATEGORY_REF.translationsDict[this._country['name_lower']].translation;
+			}
+
+			if (ancestors[0]) {
+				anc3Text = ancestors[0].LEGEND_NAME ? ancestors[0].LEGEND_NAME_LOCAL :
+					ancestors[0].CATEGORY_REF.translationsDict[this._country['name_lower']].translation;
+			}
+
+		} else {
+			anc1Text = ancestors[2].key;
+			anc2Text = ancestors[1].key;
+			anc3Text = ancestors[0].key;
+		}
 		$('.info__item_legend').show();
 		$('.legend-item, .breadcrumb__item').removeClass('active first last');
 
-		if (ancestors.length === 3) { 
+		if (ancestors.length === 3) {
 			$('.legend__amount figure').removeClass('isTotal');
-			let title = ancestors[1].LEGEND_NAME ? ancestors[1].LEGEND_NAME : ancestors[1].key;
-			$('.legend-item-1-text').text(ancestors[2].key);
-			$('.legend-item-1-description').text(ancestors[1].key);
+			$('.legend-item-1-text').text(anc1Text);
+			$('.legend-item-1-description').text(anc2Text);
 			$('.legend-item-1-price').text(ancestors[2].value);
 			$('.legend-item-1').addClass('active first');
 
 
-			$('.legend-item-2-text').text(ancestors[1].key);
-			$('.legend-item-2-description').text(ancestors[0].key);
+			$('.legend-item-2-text').text(anc2Text);
+			$('.legend-item-2-description').text(anc3Text);
 			$('.legend-item-2-price').text(ancestors[1].value);
 			$('.legend-item-2').addClass('active');
 
-			$('.legend-item-3-text').text(ancestors[0].key);
+			$('.legend-item-3-text').text(anc3Text);
 			$('.legend-item-3-price').text(ancestors[0].value);
 			$('.legend-item-3').addClass('active last');
 
 
-		 }
+		}
 		if (ancestors.length === 2) {
 			$('.legend__amount figure').removeClass('isTotal');
-			$('.legend-item-2-text').text(ancestors[1].key);
-			$('.legend-item-2-description').text(ancestors[0].key);
+			$('.legend-item-2-text').text(anc2Text);
+			$('.legend-item-2-description').text(anc3Text);
 			$('.legend-item-2-price').text(ancestors[1].value);
 			$('.legend-item-2').addClass('active first');
 
-			$('.legend-item-3-text').text(ancestors[0].key);
+			$('.legend-item-3-text').text(anc3Text);
 			$('.legend-item-3-price').text(ancestors[0].value);
 			$('.legend-item-3').addClass('active last');
 		}
-		if (ancestors.length === 1) { 
+		if (ancestors.length === 1) {
 			$('.legend__amount figure').removeClass('isTotal');
-			$('.legend-item-3-text').text(ancestors[0].key);
+			$('.legend-item-3-text').text(anc3Text);
 			$('.legend-item-3-price').text(ancestors[0].value);
 			$('.legend-item-3').addClass('active first solo');
-		 }
+		}
 
-		 if (ancestors.lenght === 0) {
-			 $('.legend__amount figure').addClass('isTotal');
-		 }
-		
+		if (ancestors.lenght === 0) {
+			$('.legend__amount figure').addClass('isTotal');
+		}
 
-		
+
+
 	}
 }
