@@ -143,9 +143,16 @@ export class SunburstHaloInfo {
 			}
 
 		} else {
-			anc1Text = ancestors[2].key;
-			anc2Text = ancestors[1].key;
-			anc3Text = ancestors[0].key;
+			if (ancestors[2]) {
+				anc1Text = ancestors[2].key;
+			}
+			if (ancestors[1]) {
+				anc2Text = ancestors[1].key;
+			 }
+			if (ancestors[0]) {
+				anc3Text = ancestors[0].key;
+			}
+			
 		}
 		$('.info__item_legend').show();
 		$('.legend-item, .breadcrumb__item').removeClass('active first last');
