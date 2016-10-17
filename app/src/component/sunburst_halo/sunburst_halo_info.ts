@@ -8,12 +8,16 @@ export class SunburstHaloInfo {
 	translations: SunburstHaloTranslation = new SunburstHaloTranslation();
 	textUsed: any;
 	_country: string;
+	_year: string;
 	useLocal: boolean = false;
 
 	constructor() {
 
 	}
 
+	set year(year) {
+		this._year = year;
+	}	
 	set country(country) {
 		this._country = country;
 		this.translations.defaults.countryName = country.name;
@@ -31,7 +35,7 @@ export class SunburstHaloInfo {
 	}
 
 	setTitle() {
-		$('.legend__title h1 span.primary,span.country_name').text(this.textUsed.countryName);
+		$('.legend__title h1 span.primary,span.country_name').text(`${this.textUsed.countryName} (${this._year})`);
 	}
 	setPrice(price, currency?) {
 		let cur = currency ? `${currency} ` : 'USD $';

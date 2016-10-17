@@ -1,18 +1,18 @@
 import * as d3 from 'd3';
 import * as _ from 'lodash';
-import {Subject} from 'rxjs/Rx';
+import { Subject } from 'rxjs/Rx';
 
-import {Utils} from './../../common/utils';
-import {Colors} from './../../common/colours';
-import {SunburstHaloUtils} from './sunburst_halo_data';
-import {WorldProjection} from './../projection/projection';
-import {SunburstHaloInfo} from './sunburst_halo_info';
+import { Utils } from './../../common/utils';
+import { Colors } from './../../common/colours';
+import { SunburstHaloUtils } from './sunburst_halo_data';
+import { WorldProjection } from './../projection/projection';
+import { SunburstHaloInfo } from './sunburst_halo_info';
 import * as recursive from 'lodash-recursive';
 
 export class SunburstHalo {
 	info: SunburstHaloInfo = new SunburstHaloInfo();
 	worldProjection: WorldProjection = new WorldProjection();
-	
+
 	scope: any = {};
 	background: any;
 	vis: any;
@@ -52,15 +52,13 @@ export class SunburstHalo {
 
 	options = window['GRAPH_OPTIONS'];
 
-	
-
 	year: any;
 
 	constructor() {
-		// if(!this.options){
-		// 	this.options = { "country": "testland", "graph": "sunburstProjection", "translations": { "totalContributions": "Totale bidrag til", "unhcr": "Totale bidrag til UNHCR", "contributions": "Sist opdateret", "comprises": "Udgør <span class=\"percentage\"></span> af", "total": "<span>Totale</span> bidrag til <span class=\"country_name\"></span>", "countryName": "testland" } };
+		// if (!this.options) {
+		// 	this.options = { "country": "Denmark", "graph": "sunburstProjection" };
 		// }
-		
+
 		this.info.country = this.options.country;
 
 		this.mobileMq = window.matchMedia("(max-width: 600px)");
@@ -149,8 +147,8 @@ export class SunburstHalo {
 	}
 
 	highlightCountry(next) {
-		
-		let node = _.find(this.nodes, (e:any) => { return e.id === next.id });
+
+		let node = _.find(this.nodes, (e: any) => { return e.id === next.id });
 		let ancestors = SunburstHaloUtils.getAncestors(node);
 		this.info.createAncestors(ancestors);
 		this.arcPlot.selectAll("path")
@@ -193,8 +191,10 @@ export class SunburstHalo {
 		}
 
 		if (this.options && this.options.hasOwnProperty('year')) {
+			this.info.year = this.options.year;
 			this.year = this.options.year;
 		} else {
+			this.info.year = 2016;
 			this.year = 2016;
 		}
 
@@ -202,7 +202,7 @@ export class SunburstHalo {
 		this.info.setLastUpdatedDate(_.max(_.map(data.entries, (e: any) => { return e.DATE })));
 		this.prepData();
 
-		this.info.setTitle();		
+		this.info.setTitle();
 		this.vis = d3.select('#graph')
 			.append("svg:svg")
 			.attr('id', this.scope.id)
@@ -238,7 +238,7 @@ export class SunburstHalo {
 	}
 
 	prepData() {
-		
+
 		let mData = _.filter(this.scope.data, (e: any) => { return e.YEAR === this.year; });
 		this.sunburstArcs =
 			d3.nest()
