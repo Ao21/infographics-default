@@ -8,7 +8,8 @@ html {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  position: relative; }
+  position: relative;
+  max-width: none; }
   .container::after {
     clear: both;
     content: "";
@@ -450,7 +451,9 @@ footer {
 
 body, html {
   font-family: 'proxima-nova';
-  background-color: transparent; }
+  background-color: transparent;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
 
 .vz-arc-plot path {
   transition: opacity 300ms; }
