@@ -199,6 +199,7 @@
 
 footer {
     @include outer-container;
+    max-width: 0;
     position: relative;
     font-size: 11px;
     text-align: left;
